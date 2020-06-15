@@ -1,7 +1,7 @@
 package com.hxs.opengles3demo
 
-import android.content.res.Resources
 import android.opengl.GLES20.*
+
 //import android.opengl.GLES30.*
 
 object ShaderUtil {
@@ -17,11 +17,25 @@ object ShaderUtil {
         glCompileShader(vertexShader)
         glCompileShader(fragmentShader)
 
+        val compileStatus = IntArray(1)
+        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, compileStatus, 0)
+        if (compileStatus[0] == 0) {
+
+            println("编译失败:${glGetShaderInfoLog(vertexShader)}")
+        }
+
         val program = glCreateProgram()
         glAttachShader(program, vertexShader)
         glAttachShader(program, fragmentShader)
 
         glLinkProgram(program)
+
+        val linkStatus = IntArray(1)
+        glGetProgramiv(program, GL_LINK_STATUS, linkStatus, 0)
+
+        if (linkStatus[0] == 0) {
+            println("hxs:链接失败")
+        }
         return program
 
 

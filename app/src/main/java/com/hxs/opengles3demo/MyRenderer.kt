@@ -10,7 +10,6 @@ class MyRenderer: GLSurfaceView.Renderer {
     private lateinit var box:Box
 
     override fun onDrawFrame(gl: GL10?) {
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f)
         glClear(GL_COLOR_BUFFER_BIT)
 
         box.enable()
@@ -22,6 +21,7 @@ class MyRenderer: GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f)
         box = Box()
     }
 }
