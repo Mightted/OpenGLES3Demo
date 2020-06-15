@@ -1,0 +1,2 @@
+rootProject.name='OpenGLES3Demo'
+include ':app'
