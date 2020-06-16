@@ -7,5 +7,5 @@ varying vec4 outColor;
 
 void main() {
     outColor = vec4(aColor, 1.0);
-    gl_Position = aPos;
+    gl_Position = uMatrix * aPos;
 }

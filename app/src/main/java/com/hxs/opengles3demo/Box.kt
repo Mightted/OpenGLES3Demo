@@ -26,6 +26,8 @@ class Box {
     private val objEBO = IntArray(1)
     private val program = ShaderUtil.getProgram(R.raw.box_vertex_shader, R.raw.box_fragment_shader)
 
+
+
     private var vertices =
         floatArrayOf( //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
             0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  // 右上
@@ -39,6 +41,10 @@ class Box {
         1, 2, 3  // 第二个三角形
     )
 
+    private var defaultMatrix = FloatArray(16)
+
+    private val uMatrixLocation = glGetUniformLocation(program, "uMatrix")
+
 
     private val vertexBuffer: FloatBuffer =
         ByteBuffer.allocateDirect(vertices.size * FLOAT_BYTE_COUNT)
@@ -48,18 +54,31 @@ class Box {
         .order(ByteOrder.nativeOrder()).asIntBuffer().put(indices)
 
     init {
+
         bindData()
+    }
+//
+//    init {
+////        initData()
+//
+//    }
+
+    private fun initData() {
+
+
+//        Matrix.setIdentityM(matrix, 0)
+
+
+
     }
 
     private fun bindData() {
-
         glGenBuffers(objVBO.size, objVBO, 0)
         glGenBuffers(objEBO.size, objEBO, 0)
 
         GLES30.glGenVertexArrays(objVAO.size, objVAO, 0)
-        val uMatrixLocation = glGetUniformLocation(program, "uMatrix")
+        Matrix.setIdentityM(defaultMatrix, 0)
 
-        val matrix = FloatArray(16)
 
         GLES30.glBindVertexArray(objVAO[0])
 
@@ -77,9 +96,7 @@ class Box {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objEBO[0])
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size * 4, indexBuffer, GL_STATIC_DRAW)
 
-
-        Matrix.setIdentityM(matrix, 0)
-        glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0)
+        glUniformMatrix4fv(uMatrixLocation, 1, false, defaultMatrix, 0)
         glVertexAttribPointer(0, 3, GL_FLOAT, false, STRIDE, 0)
         glVertexAttribPointer(1, 3, GL_FLOAT,
             false, STRIDE, COUNT_LOCATION * FLOAT_BYTE_COUNT)
@@ -93,7 +110,12 @@ class Box {
 
     fun enable() {
         glUseProgram(program)
+//        bindData(matrix)
         GLES30.glBindVertexArray(objVAO[0])
+    }
+
+    fun setMatrix(matrix:FloatArray) {
+        defaultMatrix = matrix
     }
 
     fun draw() {
