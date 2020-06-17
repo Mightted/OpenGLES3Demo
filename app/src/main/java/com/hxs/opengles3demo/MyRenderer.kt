@@ -33,7 +33,7 @@ class MyRenderer: GLSurfaceView.Renderer {
 //        box.setMatrix(projectMatrix)
 //        println("矩阵$projectMatrix")
 
-//        box.setMatrix(projectMatrix)
+        box.setMatrix(projectMatrix)
 
 
     }
