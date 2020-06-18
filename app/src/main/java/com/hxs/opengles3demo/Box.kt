@@ -43,6 +43,8 @@ class Box {
     private var defaultMatrix = FloatArray(16)
 
     private val uMatrixLocation = glGetUniformLocation(program, "uMatrix")
+    private val uTextureUnit1 = glGetUniformLocation(program, "uTextureUnit1")
+    private val uTextureUnit2 = glGetUniformLocation(program, "uTextureUnit2")
 
 
     private val vertexBuffer: FloatBuffer =
@@ -52,11 +54,21 @@ class Box {
     private val indexBuffer: IntBuffer = ByteBuffer.allocateDirect(indices.size * 4)
         .order(ByteOrder.nativeOrder()).asIntBuffer().put(indices)
 
-    val texture = TextureHelper.loadTexture(R.drawable.container)
+
 
     init {
 
         bindData()
+        glUseProgram(program)
+        val texture1 = TextureHelper.loadTexture(R.drawable.container)
+        val texture2 = TextureHelper.loadTexture(R.drawable.awesomeface, true)
+
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, texture1)
+        glActiveTexture(GL_TEXTURE1)
+        glBindTexture(GL_TEXTURE_2D, texture2)
+        glUniform1i(uTextureUnit1, 0)
+        glUniform1i(uTextureUnit2, 1)
     }
 
 
@@ -110,13 +122,15 @@ class Box {
     fun enable() {
         glUseProgram(program)
 //        bindData(matrix)
-        glBindTexture(GL_TEXTURE_2D, texture)
-        glUniformMatrix4fv(uMatrixLocation, 1, false, defaultMatrix, 0)
+//        glBindTexture(GL_TEXTURE_2D, texture)
         GLES30.glBindVertexArray(objVAO[0])
     }
 
     fun setMatrix(matrix: FloatArray) {
         defaultMatrix = matrix
+        glUseProgram(program)
+        glUniformMatrix4fv(uMatrixLocation, 1, false, defaultMatrix, 0)
+
     }
 
     fun draw() {
