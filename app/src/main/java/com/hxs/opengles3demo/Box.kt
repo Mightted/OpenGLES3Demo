@@ -3,12 +3,10 @@ package com.hxs.opengles3demo
 import android.opengl.GLES20.*
 import android.opengl.GLES30
 import android.opengl.Matrix
-
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
-import javax.microedition.khronos.opengles.GL
 
 //import android.opengl.GLES30.*
 
@@ -17,32 +15,59 @@ const val COUNT_LOCATION = 3
 const val COUNT_COLOR = 3
 const val COUNT_TEXTURE = 2
 
-const val STRIDE = (COUNT_LOCATION + COUNT_COLOR + COUNT_TEXTURE) * FLOAT_BYTE_COUNT
+const val STRIDE = (COUNT_LOCATION + COUNT_TEXTURE) * FLOAT_BYTE_COUNT
 
 class Box {
 
     private val objVBO = IntArray(1)
     private val objVAO = IntArray(1)
-    private val objEBO = IntArray(1)
+//    private val objEBO = IntArray(1)
     private val program = ShaderUtil.getProgram(R.raw.box_vertex_shader, R.raw.box_fragment_shader)
 
 
-    private var vertices =
-        floatArrayOf( //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-            0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  // 右上
-            0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // 右下
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // 左下
-            -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // 左上
-        )
-
-    private val indices = intArrayOf( // 注意索引从0开始!
-        0, 1, 3, // 第一个三角形
-        1, 2, 3  // 第二个三角形
+    private var vertices = floatArrayOf(
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
     )
 
     private var defaultMatrix = FloatArray(16)
 
     private val uMatrixLocation = glGetUniformLocation(program, "uMatrix")
+    private val uRotateMatrixLocation = glGetUniformLocation(program, "uRotateMatrix")
     private val uTextureUnit1 = glGetUniformLocation(program, "uTextureUnit1")
     private val uTextureUnit2 = glGetUniformLocation(program, "uTextureUnit2")
 
@@ -51,8 +76,8 @@ class Box {
         ByteBuffer.allocateDirect(vertices.size * FLOAT_BYTE_COUNT)
             .order(ByteOrder.nativeOrder()).asFloatBuffer().put(vertices)
 
-    private val indexBuffer: IntBuffer = ByteBuffer.allocateDirect(indices.size * 4)
-        .order(ByteOrder.nativeOrder()).asIntBuffer().put(indices)
+//    private val indexBuffer: IntBuffer = ByteBuffer.allocateDirect(indices.size * 4)
+//        .order(ByteOrder.nativeOrder()).asIntBuffer().put(indices)
 
 
 
@@ -74,7 +99,7 @@ class Box {
 
     private fun bindData() {
         glGenBuffers(objVBO.size, objVBO, 0)
-        glGenBuffers(objEBO.size, objEBO, 0)
+//        glGenBuffers(objEBO.size, objEBO, 0)
 
         GLES30.glGenVertexArrays(objVAO.size, objVAO, 0)
         Matrix.setIdentityM(defaultMatrix, 0)
@@ -92,23 +117,23 @@ class Box {
             GL_STATIC_DRAW
         )
 
-        indexBuffer.position(0)
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objEBO[0])
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size * 4, indexBuffer, GL_STATIC_DRAW)
+//        indexBuffer.position(0)
+//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objEBO[0])
+//        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size * 4, indexBuffer, GL_STATIC_DRAW)
 
 
         glVertexAttribPointer(0, 3, GL_FLOAT, false, STRIDE, 0)
-        glVertexAttribPointer(
-            1, 3, GL_FLOAT,
-            false, STRIDE, COUNT_LOCATION * FLOAT_BYTE_COUNT
-        )
+//        glVertexAttribPointer(
+//            1, 3, GL_FLOAT,
+//            false, STRIDE, COUNT_LOCATION * FLOAT_BYTE_COUNT
+//        )
         glVertexAttribPointer(
             2,
             2,
             GL_FLOAT,
             false,
             STRIDE,
-            (COUNT_LOCATION + COUNT_COLOR) * FLOAT_BYTE_COUNT
+            (COUNT_LOCATION) * FLOAT_BYTE_COUNT
         )
         glEnableVertexAttribArray(0)
         glEnableVertexAttribArray(1)
@@ -133,8 +158,13 @@ class Box {
 
     }
 
+    fun rotateMatrix(matrix: FloatArray) {
+        glUseProgram(program)
+        glUniformMatrix4fv(uRotateMatrixLocation, 1, false, matrix, 0)
+    }
+
     fun draw() {
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0)
+        glDrawArrays(GL_TRIANGLES, 0, 36)
     }
 
 

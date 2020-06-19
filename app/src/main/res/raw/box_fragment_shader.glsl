@@ -3,7 +3,7 @@ precision mediump float;
 
 uniform sampler2D uTextureUnit1;
 uniform sampler2D uTextureUnit2;
-varying vec4 outColor;
+//varying vec4 outColor;
 varying vec2 vTextureCoord;
 void main() {
 
