@@ -6,7 +6,6 @@ import android.opengl.Matrix
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
-import java.nio.IntBuffer
 
 //import android.opengl.GLES30.*
 
@@ -21,7 +20,8 @@ class Box {
 
     private val objVBO = IntArray(1)
     private val objVAO = IntArray(1)
-//    private val objEBO = IntArray(1)
+
+    //    private val objEBO = IntArray(1)
     private val program = ShaderUtil.getProgram(R.raw.box_vertex_shader, R.raw.box_fragment_shader)
 
 
@@ -66,8 +66,9 @@ class Box {
 
     private var defaultMatrix = FloatArray(16)
 
-    private val uMatrixLocation = glGetUniformLocation(program, "uMatrix")
-    private val uRotateMatrixLocation = glGetUniformLocation(program, "uRotateMatrix")
+    private val projectionMatrixLocation = glGetUniformLocation(program, "projectionMatrix")
+    private val modelMatrixLocation = glGetUniformLocation(program, "modelMatrix")
+    private val viewMatrixLocation = glGetUniformLocation(program, "viewMatrix")
     private val uTextureUnit1 = glGetUniformLocation(program, "uTextureUnit1")
     private val uTextureUnit2 = glGetUniformLocation(program, "uTextureUnit2")
 
@@ -80,13 +81,17 @@ class Box {
 //        .order(ByteOrder.nativeOrder()).asIntBuffer().put(indices)
 
 
-
     init {
 
         bindData()
         glUseProgram(program)
         val texture1 = TextureHelper.loadTexture(R.drawable.container)
         val texture2 = TextureHelper.loadTexture(R.drawable.awesomeface, true)
+
+        Matrix.setIdentityM(defaultMatrix, 0)
+        modelMatrix(defaultMatrix)
+        viewMatrix(defaultMatrix)
+        projectionMatrix(defaultMatrix)
 
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, texture1)
@@ -148,19 +153,24 @@ class Box {
         glUseProgram(program)
 //        bindData(matrix)
 //        glBindTexture(GL_TEXTURE_2D, texture)
+
         GLES30.glBindVertexArray(objVAO[0])
     }
 
-    fun setMatrix(matrix: FloatArray) {
-        defaultMatrix = matrix
+    fun projectionMatrix(matrix: FloatArray) {
         glUseProgram(program)
-        glUniformMatrix4fv(uMatrixLocation, 1, false, defaultMatrix, 0)
-
+        glUniformMatrix4fv(projectionMatrixLocation, 1, false, matrix, 0)
     }
 
-    fun rotateMatrix(matrix: FloatArray) {
+    fun modelMatrix(matrix: FloatArray) {
         glUseProgram(program)
-        glUniformMatrix4fv(uRotateMatrixLocation, 1, false, matrix, 0)
+        glUniformMatrix4fv(modelMatrixLocation, 1, false, matrix, 0)
+    }
+
+    fun viewMatrix(matrix: FloatArray) {
+        glUseProgram(program)
+        glUniformMatrix4fv(viewMatrixLocation, 1, false, matrix, 0)
+
     }
 
     fun draw() {
