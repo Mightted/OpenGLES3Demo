@@ -5,6 +5,9 @@ import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 const val TIME_FRAME: Float = 1000f / 60f
@@ -20,8 +23,14 @@ class MyRenderer : GLSurfaceView.Renderer {
     private val viewProjectMatrix = FloatArray(16)
     private val modelMatrix = FloatArray(16)
     private val rotateMatrix = FloatArray(16)
-    private val currentTime = System.currentTimeMillis()
+    private var currentTime = System.currentTimeMillis()
     private var frames = 0
+    private val defaultRadius = 8f
+    private var eyeX: Float = 0f
+    private var eyeY: Float = 0f
+    private var eyeZ: Float = defaultRadius
+    private var xzRadian: Float = 0f
+    private var yRadian: Float = 0f
 
 
     private fun progress(): Int {
@@ -35,42 +44,47 @@ class MyRenderer : GLSurfaceView.Renderer {
     override fun onDrawFrame(gl: GL10?) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
+        observedCamera(box, 0.5f, 1f, 0f)
 
+        observedCamera(box1, 0.5f, 0f, 1f)
+//
+//        observedCamera(box2, 0.5f, 1f, 1f)
+//
+//        observedCamera(box3, 0f, 0.8f, 1f)
+    }
 
+    private fun observedCamera(box: Box, x: Float, y: Float, z: Float) {
         box.enable()
-        rotateMatrix(box1, 0.5f, 1f, 0f)
-//        Matrix.setIdentityM(rotateMatrix, 0)
-//        Matrix.rotateM(rotateMatrix, 0, progress() * 1.5f, 0.5f, 1f, 0f)
-//        box.modelMatrix(rotateMatrix)
+//        rotateMatrix(box, x, y, z)
+        rotateCamera(box)
         box.draw()
-
-
-        box1.enable()
-        rotateMatrix(box1, 0.5f, 0f, 1f)
-//        Matrix.setIdentityM(rotateMatrix, 0)
-//        Matrix.rotateM(rotateMatrix, 0, progress() * 1.5f, 0.5f, 0f, 1f)
-//        box1.modelMatrix(rotateMatrix)
-        box1.draw()
-
-        box2.enable()
-        rotateMatrix(box2, 0.5f, 1f, 1f)
-//        Matrix.setIdentityM(rotateMatrix, 0)
-//        Matrix.rotateM(rotateMatrix, 0, progress() * 1.5f, 0.5f, 1f, 1f)
-//        box2.modelMatrix(rotateMatrix)
-        box2.draw()
-
-        box3.enable()
-        rotateMatrix(box3, 0f, 0.8f, 1f)
-//        Matrix.setIdentityM(rotateMatrix, 0)
-//        Matrix.rotateM(rotateMatrix, 0, progress() * 1.5f, 0f, 0.8f, 1f)
-//        box3.modelMatrix(rotateMatrix)
-        box3.draw()
     }
 
     private fun rotateMatrix(box: Box, x: Float, y: Float, z: Float) {
         Matrix.setIdentityM(rotateMatrix, 0)
-        Matrix.rotateM(rotateMatrix, 0, progress() * 1.5f, x, y, z)
+        Matrix.rotateM(rotateMatrix, 0, 0 * 1.5f, x, y, z)
         box.modelMatrix(rotateMatrix)
+
+    }
+
+    private fun autoCamera(box: Box) {
+        val radian: Float = PI.toFloat() * progress() * 1.5f / 180
+        rotateCamera(box, sin(-radian) * 5f, 0f, cos(radian) * 5f)
+    }
+
+    private fun rotateCamera(box: Box, x: Float = eyeX, y: Float = eyeY, z: Float = eyeZ) {
+        eyeX = x
+        eyeY = y
+        eyeZ = z
+        Matrix.setIdentityM(viewMatrix, 0)
+        Matrix.setLookAtM(
+            viewMatrix, 0,
+            eyeX, eyeY, eyeZ,
+            0f, 0f, 0f,
+            0f, 1f, 0f
+        )
+
+        box.viewMatrix(viewMatrix)
 
     }
 
@@ -81,7 +95,7 @@ class MyRenderer : GLSurfaceView.Renderer {
 
         Matrix.setLookAtM(
             viewMatrix, 0,
-            0f, 0f, 3f,
+            0f, 0f, 5f,
             0f, 0f, 0f,
             0f, 1f, 0f
         )
@@ -123,20 +137,46 @@ class MyRenderer : GLSurfaceView.Renderer {
 
 
     private fun translateM(x: Float, y: Float, z: Float): FloatArray {
-        val temp = FloatArray(16)
         Matrix.setIdentityM(modelMatrix, 0)
         Matrix.translateM(modelMatrix, 0, x, y, z)
-        Matrix.multiplyMM(temp, 0, projectMatrix, 0, modelMatrix, 0)
-        return temp
+        return modelMatrix
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f)
         glEnable(GL_DEPTH_TEST)
-        box = Box()
+        box = Box().apply {
+            modelMatrix(translateM(0.5f, 0f, 1f))
+        }
         box1 = Box()
         box2 = Box()
         box3 = Box()
 
+    }
+
+    fun moveCamera(x: Float, y: Float) {
+        val xzAngle = PI.toFloat() * x * 100f / 180 + xzRadian
+        var yAngle = PI.toFloat() * y * 100f / 180 + yRadian
+        if (yAngle >= 0.5f * PI.toFloat()- 0.3f) {
+            yAngle = 0.5f * PI.toFloat() - 0.3f
+        } else if (yAngle <= -0.5f * PI.toFloat()- 0.3f) {
+            yAngle = -0.5f * PI.toFloat() + 0.3f
+        }
+        println(yAngle)
+        val xzRadius = cos(yAngle) * defaultRadius
+        eyeX = sin(-xzAngle) * xzRadius
+        eyeY = -sin(yAngle) * defaultRadius
+        eyeZ = cos(xzAngle) * xzRadius
+
+    }
+
+    fun stopMove(x: Float, y: Float) {
+        xzRadian += PI.toFloat() * x * 100f / 180
+        yRadian += PI.toFloat() * y * 100f / 180
+    }
+
+
+    fun onResume() {
+        currentTime = System.currentTimeMillis() - (frames * TIME_FRAME).toInt()
     }
 }

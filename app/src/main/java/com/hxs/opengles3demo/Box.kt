@@ -64,7 +64,15 @@ class Box {
         -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
     )
 
-    private var defaultMatrix = FloatArray(16)
+    private var modelMatrix = FloatArray(16).apply {
+        Matrix.setIdentityM(this, 0)
+    }
+     private var viewMatrix = FloatArray(16).apply {
+        Matrix.setIdentityM(this, 0)
+    }
+    private var projectionMatrix = FloatArray(16).apply {
+        Matrix.setIdentityM(this, 0)
+    }
 
     private val projectionMatrixLocation = glGetUniformLocation(program, "projectionMatrix")
     private val modelMatrixLocation = glGetUniformLocation(program, "modelMatrix")
@@ -88,10 +96,9 @@ class Box {
         val texture1 = TextureHelper.loadTexture(R.drawable.container)
         val texture2 = TextureHelper.loadTexture(R.drawable.awesomeface, true)
 
-        Matrix.setIdentityM(defaultMatrix, 0)
-        modelMatrix(defaultMatrix)
-        viewMatrix(defaultMatrix)
-        projectionMatrix(defaultMatrix)
+        modelMatrix(modelMatrix, true)
+        viewMatrix(viewMatrix, true)
+        projectionMatrix(projectionMatrix, true)
 
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, texture1)
@@ -107,8 +114,6 @@ class Box {
 //        glGenBuffers(objEBO.size, objEBO, 0)
 
         GLES30.glGenVertexArrays(objVAO.size, objVAO, 0)
-        Matrix.setIdentityM(defaultMatrix, 0)
-
 
         GLES30.glBindVertexArray(objVAO[0])
 
@@ -157,17 +162,29 @@ class Box {
         GLES30.glBindVertexArray(objVAO[0])
     }
 
-    fun projectionMatrix(matrix: FloatArray) {
+    fun projectionMatrix(matrix: FloatArray, force: Boolean = false) {
+        if (matrix.contentEquals(projectionMatrix) && !force) {
+            return
+        }
+        projectionMatrix = matrix.clone()
         glUseProgram(program)
         glUniformMatrix4fv(projectionMatrixLocation, 1, false, matrix, 0)
     }
 
-    fun modelMatrix(matrix: FloatArray) {
+    fun modelMatrix(matrix: FloatArray, force: Boolean = false) {
+        if (matrix.contentEquals(modelMatrix) && !force) {
+            return
+        }
+        modelMatrix = matrix.clone()
         glUseProgram(program)
         glUniformMatrix4fv(modelMatrixLocation, 1, false, matrix, 0)
     }
 
-    fun viewMatrix(matrix: FloatArray) {
+    fun viewMatrix(matrix: FloatArray, force: Boolean = false) {
+        if (matrix.contentEquals(viewMatrix) && !force) {
+            return
+        }
+        viewMatrix = matrix.clone()
         glUseProgram(program)
         glUniformMatrix4fv(viewMatrixLocation, 1, false, matrix, 0)
 
