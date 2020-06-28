@@ -145,10 +145,10 @@ class MyRenderer : GLSurfaceView.Renderer {
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f)
         glEnable(GL_DEPTH_TEST)
-        box = Box().apply {
-            modelMatrix(translateM(0.5f, 0f, 1f))
+        box = Box()
+        box1 = Box().apply {
+            modelMatrix(translateM(1.4f, 1f, -2f))
         }
-        box1 = Box()
         box2 = Box()
         box3 = Box()
 
@@ -157,10 +157,10 @@ class MyRenderer : GLSurfaceView.Renderer {
     fun moveCamera(x: Float, y: Float) {
         val xzAngle = PI.toFloat() * x * 100f / 180 + xzRadian
         var yAngle = PI.toFloat() * y * 100f / 180 + yRadian
-        if (yAngle >= 0.5f * PI.toFloat()- 0.3f) {
-            yAngle = 0.5f * PI.toFloat() - 0.3f
-        } else if (yAngle <= -0.5f * PI.toFloat()- 0.3f) {
-            yAngle = -0.5f * PI.toFloat() + 0.3f
+        if (yAngle >= 0.5f * PI.toFloat()- 0.02f) {
+            yAngle = 0.5f * PI.toFloat() -0.02f
+        } else if (yAngle <= -0.5f * PI.toFloat() + 0.02f) {
+            yAngle = -0.5f * PI.toFloat() + 0.02f
         }
         println(yAngle)
         val xzRadius = cos(yAngle) * defaultRadius
