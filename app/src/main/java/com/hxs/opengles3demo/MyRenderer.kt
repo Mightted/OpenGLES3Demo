@@ -15,9 +15,10 @@ const val TIME_FRAME: Float = 1000f / 60f
 class MyRenderer : GLSurfaceView.Renderer {
 
     private lateinit var box: Box
-    private lateinit var box1: Box
-    private lateinit var box2: Box
-    private lateinit var box3: Box
+    private lateinit var light: Light
+//    private lateinit var box1: Box
+//    private lateinit var box2: Box
+//    private lateinit var box3: Box
     private val projectMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
     private val viewProjectMatrix = FloatArray(16)
@@ -46,24 +47,24 @@ class MyRenderer : GLSurfaceView.Renderer {
 
         observedCamera(box, 0.5f, 1f, 0f)
 
-        observedCamera(box1, 0.5f, 0f, 1f)
+        observedCamera(light, 0.5f, 0f, 1f)
 //
 //        observedCamera(box2, 0.5f, 1f, 1f)
 //
 //        observedCamera(box3, 0f, 0.8f, 1f)
     }
 
-    private fun observedCamera(box: Box, x: Float, y: Float, z: Float) {
-        box.enable()
+    private fun observedCamera(objectGL: ObjectGL, x: Float, y: Float, z: Float) {
+        objectGL.enable()
 //        rotateMatrix(box, x, y, z)
-        rotateCamera(box)
-        box.draw()
+        rotateCamera(objectGL)
+        objectGL.draw()
     }
 
-    private fun rotateMatrix(box: Box, x: Float, y: Float, z: Float) {
+    private fun rotateMatrix(objectGL: ObjectGL, x: Float, y: Float, z: Float) {
         Matrix.setIdentityM(rotateMatrix, 0)
         Matrix.rotateM(rotateMatrix, 0, 0 * 1.5f, x, y, z)
-        box.modelMatrix(rotateMatrix)
+        objectGL.modelMatrix(rotateMatrix)
 
     }
 
@@ -72,7 +73,7 @@ class MyRenderer : GLSurfaceView.Renderer {
         rotateCamera(box, sin(-radian) * 5f, 0f, cos(radian) * 5f)
     }
 
-    private fun rotateCamera(box: Box, x: Float = eyeX, y: Float = eyeY, z: Float = eyeZ) {
+    private fun rotateCamera(objectGL: ObjectGL, x: Float = eyeX, y: Float = eyeY, z: Float = eyeZ) {
         eyeX = x
         eyeY = y
         eyeZ = z
@@ -84,7 +85,7 @@ class MyRenderer : GLSurfaceView.Renderer {
             0f, 1f, 0f
         )
 
-        box.viewMatrix(viewMatrix)
+        objectGL.viewMatrix(viewMatrix)
 
     }
 
@@ -123,16 +124,16 @@ class MyRenderer : GLSurfaceView.Renderer {
 //        box3.projectionMatrix(projectMatrix)
 
         viewProjectionMatrix(box)
-        viewProjectionMatrix(box1)
-        viewProjectionMatrix(box2)
-        viewProjectionMatrix(box3)
+        viewProjectionMatrix(light)
+//        viewProjectionMatrix(box2)
+//        viewProjectionMatrix(box3)
 
 
     }
 
-    private fun viewProjectionMatrix(box: Box) {
-        box.viewMatrix(viewMatrix)
-        box.projectionMatrix(projectMatrix)
+    private fun viewProjectionMatrix(objectGL: ObjectGL) {
+        objectGL.viewMatrix(viewMatrix)
+        objectGL.projectionMatrix(projectMatrix)
     }
 
 
@@ -143,14 +144,20 @@ class MyRenderer : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f)
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f)
         glEnable(GL_DEPTH_TEST)
-        box = Box()
-        box1 = Box().apply {
+
+        light = Light().apply {
             modelMatrix(translateM(1.4f, 1f, -2f))
         }
-        box2 = Box()
-        box3 = Box()
+        box = Box().apply {
+            lightPos(1.4f, 1f, -2f)
+        }
+//        box1 = Box().apply {
+//            modelMatrix(translateM(1.4f, 1f, -2f))
+//        }
+//        box2 = Box()
+//        box3 = Box()
 
     }
 
@@ -162,7 +169,7 @@ class MyRenderer : GLSurfaceView.Renderer {
         } else if (yAngle <= -0.5f * PI.toFloat() + 0.02f) {
             yAngle = -0.5f * PI.toFloat() + 0.02f
         }
-        println(yAngle)
+//        println(yAngle)
         val xzRadius = cos(yAngle) * defaultRadius
         eyeX = sin(-xzAngle) * xzRadius
         eyeY = -sin(yAngle) * defaultRadius
