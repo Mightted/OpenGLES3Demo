@@ -87,6 +87,7 @@ class Box : ObjectGL {
     private val lightColorLocation = glGetUniformLocation(program, "lightColor")
     private val objectColorLocation = glGetUniformLocation(program, "objectColor")
     private val lightPosLocation = glGetUniformLocation(program, "lightPos")
+    private val viewPosLocation = glGetUniformLocation(program, "viewPos")
 //    private val uTextureUnit1 = glGetUniformLocation(program, "uTextureUnit1")
 //    private val uTextureUnit2 = glGetUniformLocation(program, "uTextureUnit2")
 
@@ -208,7 +209,12 @@ class Box : ObjectGL {
 
     fun lightPos(x: Float, y: Float, z: Float) {
         glUseProgram(program)
-        glUniform3f(lightColorLocation, x, y, z)
+        glUniform3f(lightPosLocation, x, y, z)
+    }
+
+    fun viewPos(x:Float, y:Float, z:Float) {
+        glUseProgram(program)
+        glUniform3f(viewPosLocation, x, y, z)
     }
 
     override fun draw() {

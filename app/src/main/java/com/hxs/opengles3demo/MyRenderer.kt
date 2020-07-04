@@ -1,5 +1,6 @@
 package com.hxs.opengles3demo
 
+import android.opengl.EGLObjectHandle
 import android.opengl.GLES20.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
@@ -16,7 +17,8 @@ class MyRenderer : GLSurfaceView.Renderer {
 
     private lateinit var box: Box
     private lateinit var light: Light
-//    private lateinit var box1: Box
+
+        private lateinit var box1: Box
 //    private lateinit var box2: Box
 //    private lateinit var box3: Box
     private val projectMatrix = FloatArray(16)
@@ -32,6 +34,7 @@ class MyRenderer : GLSurfaceView.Renderer {
     private var eyeZ: Float = defaultRadius
     private var xzRadian: Float = 0f
     private var yRadian: Float = 0f
+    private var currentRadian: Float = 0f
 
 
     private fun progress(): Int {
@@ -45,19 +48,27 @@ class MyRenderer : GLSurfaceView.Renderer {
     override fun onDrawFrame(gl: GL10?) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        observedCamera(box, 0.5f, 1f, 0f)
+        observedCamera(box, 0.5f, 1f, 0f) {
+            rotateCamera(it)
+        }
 
-        observedCamera(light, 0.5f, 0f, 1f)
+        box1.enable()
+        box1.draw()
+
+//        observedCamera(light, 0.5f, 0f, 1f) {
+//            autoCamera(it)
+//        }
 //
 //        observedCamera(box2, 0.5f, 1f, 1f)
 //
 //        observedCamera(box3, 0f, 0.8f, 1f)
     }
 
-    private fun observedCamera(objectGL: ObjectGL, x: Float, y: Float, z: Float) {
+    private fun observedCamera(objectGL: ObjectGL, x: Float, y: Float, z: Float, handle: (ObjectGL)->Unit) {
         objectGL.enable()
 //        rotateMatrix(box, x, y, z)
-        rotateCamera(objectGL)
+        handle(objectGL)
+//        autoCamera(objectGL)
         objectGL.draw()
     }
 
@@ -68,19 +79,30 @@ class MyRenderer : GLSurfaceView.Renderer {
 
     }
 
-    private fun autoCamera(box: Box) {
+    private fun autoCamera(objectGL: ObjectGL) {
         val radian: Float = PI.toFloat() * progress() * 1.5f / 180
-        rotateCamera(box, sin(-radian) * 5f, 0f, cos(radian) * 5f)
+
+        rotateCamera(
+            objectGL,
+            sin(-radian) * (cos(currentRadian) * defaultRadius),
+            -defaultRadius * sin(currentRadian),
+            cos(radian) * (cos(currentRadian) * defaultRadius)
+        )
     }
 
-    private fun rotateCamera(objectGL: ObjectGL, x: Float = eyeX, y: Float = eyeY, z: Float = eyeZ) {
-        eyeX = x
-        eyeY = y
-        eyeZ = z
-        Matrix.setIdentityM(viewMatrix, 0)
+    private fun rotateCamera(
+        objectGL: ObjectGL,
+        x: Float = eyeX,
+        y: Float = eyeY,
+        z: Float = eyeZ
+    ) {
+//        eyeX = x
+//        eyeY = y
+//        eyeZ = z
+        Matrix.setIdentityM(viewMatrix, 70)
         Matrix.setLookAtM(
             viewMatrix, 0,
-            eyeX, eyeY, eyeZ,
+            x, y, z,
             0f, 0f, 0f,
             0f, 1f, 0f
         )
@@ -125,6 +147,7 @@ class MyRenderer : GLSurfaceView.Renderer {
 
         viewProjectionMatrix(box)
         viewProjectionMatrix(light)
+        viewProjectionMatrix(box1)
 //        viewProjectionMatrix(box2)
 //        viewProjectionMatrix(box3)
 
@@ -152,10 +175,11 @@ class MyRenderer : GLSurfaceView.Renderer {
         }
         box = Box().apply {
             lightPos(1.4f, 1f, -2f)
+            viewPos(0f, 0f, 5f)
         }
-//        box1 = Box().apply {
-//            modelMatrix(translateM(1.4f, 1f, -2f))
-//        }
+        box1 = Box().apply {
+            modelMatrix(translateM(1.4f, 1f, -2f))
+        }
 //        box2 = Box()
 //        box3 = Box()
 
@@ -164,8 +188,8 @@ class MyRenderer : GLSurfaceView.Renderer {
     fun moveCamera(x: Float, y: Float) {
         val xzAngle = PI.toFloat() * x * 100f / 180 + xzRadian
         var yAngle = PI.toFloat() * y * 100f / 180 + yRadian
-        if (yAngle >= 0.5f * PI.toFloat()- 0.02f) {
-            yAngle = 0.5f * PI.toFloat() -0.02f
+        if (yAngle >= 0.5f * PI.toFloat() - 0.02f) {
+            yAngle = 0.5f * PI.toFloat() - 0.02f
         } else if (yAngle <= -0.5f * PI.toFloat() + 0.02f) {
             yAngle = -0.5f * PI.toFloat() + 0.02f
         }
@@ -174,6 +198,8 @@ class MyRenderer : GLSurfaceView.Renderer {
         eyeX = sin(-xzAngle) * xzRadius
         eyeY = -sin(yAngle) * defaultRadius
         eyeZ = cos(xzAngle) * xzRadius
+
+//        currentRadian = yAngle
 
     }
 

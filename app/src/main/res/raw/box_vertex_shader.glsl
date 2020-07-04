@@ -1,11 +1,12 @@
-layout (location = 0) attribute vec4 aPos;
-layout (location = 1) attribute vec3 aNormal;
+#version 320 es
+layout (location = 0) in vec4 aPos;
+layout (location = 1) in vec3 aNormal;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 
-varying vec3 vNormal;
-varying vec3 fragPos;
+out vec3 vNormal;
+out vec3 fragPos;
 
 
 //varying vec4 outColor;
@@ -16,7 +17,7 @@ varying vec3 fragPos;
 void main() {
 //    vTextureCoord = aTextureCoord;
     //    outColor = vec4(aColor, 1.0);
-    vNormal = aNormal;
+    vNormal = mat3(transpose(inverse(modelMatrix))) * aNormal;
     fragPos = vec3(modelMatrix * aPos);
     gl_Position = projectionMatrix  * viewMatrix * modelMatrix * aPos;
 }
