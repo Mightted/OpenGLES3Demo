@@ -18,12 +18,11 @@ class MyRenderer : GLSurfaceView.Renderer {
     private lateinit var box: Box
     private lateinit var light: Light
 
-        private lateinit var box1: Box
+    //        private lateinit var box1: Box
 //    private lateinit var box2: Box
 //    private lateinit var box3: Box
     private val projectMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
-    private val viewProjectMatrix = FloatArray(16)
     private val modelMatrix = FloatArray(16)
     private val rotateMatrix = FloatArray(16)
     private var currentTime = System.currentTimeMillis()
@@ -52,19 +51,23 @@ class MyRenderer : GLSurfaceView.Renderer {
             rotateCamera(it)
         }
 
-        box1.enable()
-        box1.draw()
 
-//        observedCamera(light, 0.5f, 0f, 1f) {
-//            autoCamera(it)
-//        }
+        observedCamera(light, 0.5f, 0f, 1f) {
+            autoCamera(it)
+        }
 //
 //        observedCamera(box2, 0.5f, 1f, 1f)
 //
 //        observedCamera(box3, 0f, 0.8f, 1f)
     }
 
-    private fun observedCamera(objectGL: ObjectGL, x: Float, y: Float, z: Float, handle: (ObjectGL)->Unit) {
+    private fun observedCamera(
+        objectGL: ObjectGL,
+        x: Float,
+        y: Float,
+        z: Float,
+        handle: (ObjectGL) -> Unit
+    ) {
         objectGL.enable()
 //        rotateMatrix(box, x, y, z)
         handle(objectGL)
@@ -99,7 +102,7 @@ class MyRenderer : GLSurfaceView.Renderer {
 //        eyeX = x
 //        eyeY = y
 //        eyeZ = z
-        Matrix.setIdentityM(viewMatrix, 70)
+        Matrix.setIdentityM(viewMatrix, 0)
         Matrix.setLookAtM(
             viewMatrix, 0,
             x, y, z,
@@ -109,6 +112,10 @@ class MyRenderer : GLSurfaceView.Renderer {
 
         objectGL.viewMatrix(viewMatrix)
 
+    }
+
+    private fun rotateObject(objectGL:ObjectGL) {
+        
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -147,7 +154,6 @@ class MyRenderer : GLSurfaceView.Renderer {
 
         viewProjectionMatrix(box)
         viewProjectionMatrix(light)
-        viewProjectionMatrix(box1)
 //        viewProjectionMatrix(box2)
 //        viewProjectionMatrix(box3)
 
@@ -171,14 +177,16 @@ class MyRenderer : GLSurfaceView.Renderer {
         glEnable(GL_DEPTH_TEST)
 
         light = Light().apply {
-            modelMatrix(translateM(1.4f, 1f, -2f))
+
+            modelMatrix(modelMatrix.apply {
+                Matrix.setIdentityM(modelMatrix, 0)
+                Matrix.scaleM(modelMatrix, 0, 0.5f, 0.5f, 0.5f)
+                Matrix.translateM(modelMatrix, 0, 1.4f, 1f, -2f)
+            })
         }
         box = Box().apply {
             lightPos(1.4f, 1f, -2f)
             viewPos(0f, 0f, 5f)
-        }
-        box1 = Box().apply {
-            modelMatrix(translateM(1.4f, 1f, -2f))
         }
 //        box2 = Box()
 //        box3 = Box()

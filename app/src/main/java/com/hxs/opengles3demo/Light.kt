@@ -12,77 +12,85 @@ import java.nio.FloatBuffer
  * Author: Mightted
  * Description:
  */
-class Light:ObjectGL {
+class Light:ObjectGL() {
 
 //    private val objVBO = IntArray(1)
     private val objVAO = IntArray(1)
 
     //    private val objEBO = IntArray(1)
-    private val program = ShaderUtil.getProgram(R.raw.light_vertex_shader, R.raw.lignt_fragment_shader)
+//    private val program = ShaderUtil.getProgram(R.raw.light_vertex_shader, R.raw.light_fragment_shader)
 
 
-    private var vertices = floatArrayOf(
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, 0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f, -0.5f, 0.5f,
-        -0.5f, -0.5f, 0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, 0.5f, -0.5f,
-        0.5f, 0.5f, -0.5f,
-        0.5f, 0.5f, 0.5f,
-        0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, 0.5f,
-        -0.5f, 0.5f, -0.5f
-    )
+//    private var vertices = floatArrayOf(
+//        -0.5f, -0.5f, -0.5f,
+//        0.5f, -0.5f, -0.5f,
+//        0.5f, 0.5f, -0.5f,
+//        0.5f, 0.5f, -0.5f,
+//        -0.5f, 0.5f, -0.5f,
+//        -0.5f, -0.5f, -0.5f,
+//        -0.5f, -0.5f, 0.5f,
+//        0.5f, -0.5f, 0.5f,
+//        0.5f, 0.5f, 0.5f,
+//        0.5f, 0.5f, 0.5f,
+//        -0.5f, 0.5f, 0.5f,
+//        -0.5f, -0.5f, 0.5f,
+//        -0.5f, 0.5f, 0.5f,
+//        -0.5f, 0.5f, -0.5f,
+//        -0.5f, -0.5f, -0.5f,
+//        -0.5f, -0.5f, -0.5f,
+//        -0.5f, -0.5f, 0.5f,
+//        -0.5f, 0.5f, 0.5f,
+//        0.5f, 0.5f, 0.5f,
+//        0.5f, 0.5f, -0.5f,
+//        0.5f, -0.5f, -0.5f,
+//        0.5f, -0.5f, -0.5f,
+//        0.5f, -0.5f, 0.5f,
+//        0.5f, 0.5f, 0.5f,
+//        -0.5f, -0.5f, -0.5f,
+//        0.5f, -0.5f, -0.5f,
+//        0.5f, -0.5f, 0.5f,
+//        0.5f, -0.5f, 0.5f,
+//        -0.5f, -0.5f, 0.5f,
+//        -0.5f, -0.5f, -0.5f,
+//        -0.5f, 0.5f, -0.5f,
+//        0.5f, 0.5f, -0.5f,
+//        0.5f, 0.5f, 0.5f,
+//        0.5f, 0.5f, 0.5f,
+//        -0.5f, 0.5f, 0.5f,
+//        -0.5f, 0.5f, -0.5f
+//    )
 
-    private var modelMatrix = FloatArray(16).apply {
-        Matrix.setIdentityM(this, 0)
+//    private var modelMatrix = FloatArray(16).apply {
+//        Matrix.setIdentityM(this, 0)
+//    }
+//    private var viewMatrix = FloatArray(16).apply {
+//        Matrix.setIdentityM(this, 0)
+//    }
+//    private var projectionMatrix = FloatArray(16).apply {
+//        Matrix.setIdentityM(this, 0)
+//    }
+
+//    private val projectionMatrixLocation =glGetUniformLocation(program, "projectionMatrix")
+//    private val modelMatrixLocation = glGetUniformLocation(program, "modelMatrix")
+//    private val viewMatrixLocation = glGetUniformLocation(program, "viewMatrix")
+
+    private fun initUniformLocation() {
+        projectionMatrixLocation = glGetUniformLocation(program, "projectionMatrix")
+        modelMatrixLocation = glGetUniformLocation(program, "modelMatrix")
+        viewMatrixLocation = glGetUniformLocation(program, "viewMatrix")
+
     }
-    private var viewMatrix = FloatArray(16).apply {
-        Matrix.setIdentityM(this, 0)
-    }
-    private var projectionMatrix = FloatArray(16).apply {
-        Matrix.setIdentityM(this, 0)
-    }
-
-    private val projectionMatrixLocation =glGetUniformLocation(program, "projectionMatrix")
-    private val modelMatrixLocation = glGetUniformLocation(program, "modelMatrix")
-    private val viewMatrixLocation = glGetUniformLocation(program, "viewMatrix")
 
 
-    private val vertexBuffer: FloatBuffer =
-        ByteBuffer.allocateDirect(vertices.size * FLOAT_BYTE_COUNT)
-            .order(ByteOrder.nativeOrder()).asFloatBuffer().put(vertices)
-
+//    private val vertexBuffer: FloatBuffer =
+//        ByteBuffer.allocateDirect(vertices.size * FLOAT_BYTE_COUNT)
+//            .order(ByteOrder.nativeOrder()).asFloatBuffer().put(vertices)
 
 
     init {
 
+        initProgram(R.raw.light_vertex_shader, R.raw.light_fragment_shader)
+        initUniformLocation()
         bindData()
         glUseProgram(program)
 
@@ -129,33 +137,33 @@ class Light:ObjectGL {
         GLES30.glBindVertexArray(objVAO[0])
     }
 
-    override fun projectionMatrix(matrix: FloatArray, force: Boolean ) {
-        if (matrix.contentEquals(projectionMatrix) && !force) {
-            return
-        }
-        projectionMatrix = matrix.clone()
-        glUseProgram(program)
-        glUniformMatrix4fv(projectionMatrixLocation, 1, false, matrix, 0)
-    }
+//    override fun projectionMatrix(matrix: FloatArray, force: Boolean ) {
+//        if (matrix.contentEquals(projectionMatrix) && !force) {
+//            return
+//        }
+//        projectionMatrix = matrix.clone()
+//        glUseProgram(program)
+//        glUniformMatrix4fv(projectionMatrixLocation, 1, false, matrix, 0)
+//    }
 
-    override fun modelMatrix(matrix: FloatArray, force: Boolean ) {
-        if (matrix.contentEquals(modelMatrix) && !force) {
-            return
-        }
-        modelMatrix = matrix.clone()
-        glUseProgram(program)
-        glUniformMatrix4fv(modelMatrixLocation, 1, false, matrix, 0)
-    }
+//    override fun modelMatrix(matrix: FloatArray, force: Boolean ) {
+//        if (matrix.contentEquals(modelMatrix) && !force) {
+//            return
+//        }
+//        modelMatrix = matrix.clone()
+//        glUseProgram(program)
+//        glUniformMatrix4fv(modelMatrixLocation, 1, false, matrix, 0)
+//    }
 
-    override fun viewMatrix(matrix: FloatArray, force: Boolean) {
-        if (matrix.contentEquals(viewMatrix) && !force) {
-            return
-        }
-        viewMatrix = matrix.clone()
-        glUseProgram(program)
-        glUniformMatrix4fv(viewMatrixLocation, 1, false, matrix, 0)
-
-    }
+//    override fun viewMatrix(matrix: FloatArray, force: Boolean) {
+//        if (matrix.contentEquals(viewMatrix) && !force) {
+//            return
+//        }
+//        viewMatrix = matrix.clone()
+//        glUseProgram(program)
+//        glUniformMatrix4fv(viewMatrixLocation, 1, false, matrix, 0)
+//
+//    }
 
     override fun draw() {
         glDrawArrays(GL_TRIANGLES, 0, 36)

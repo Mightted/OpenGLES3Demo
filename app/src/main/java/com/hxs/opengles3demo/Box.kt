@@ -18,76 +18,77 @@ const val COUNT_TEXTURE = 2
 
 const val STRIDE = (COUNT_LOCATION + COUNT_NORMAL) * FLOAT_BYTE_COUNT
 
-class Box : ObjectGL {
+class Box : ObjectGL() {
 
     //    private val objVBO = IntArray(1)
     private val objVAO = IntArray(1)
 
     private val objEBO = IntArray(1)
-    private val program = ShaderUtil.getProgram(R.raw.box_vertex_shader, R.raw.box_fragment_shader)
+//    private val program = ShaderUtil.getProgram(R.raw.box_vertex_shader, R.raw.box_fragment_shader)
 
 
-    private var vertices = floatArrayOf(
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+//    private var vertices = floatArrayOf(
+//        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+//        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+//        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+//        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+//        -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+//        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+//
+//        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+//        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+//        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+//        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+//        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+//        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+//
+//        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+//        -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+//        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+//        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+//        -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+//        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+//
+//        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+//        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+//        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+//        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+//        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+//        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+//
+//        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+//        0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+//        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+//        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+//        -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+//        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+//
+//        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+//        0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+//        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+//        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+//        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+//        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f
+//    )
 
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
 
-        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+    private fun initUniformLocation() {
+        projectionMatrixLocation = glGetUniformLocation(program, "projectionMatrix")
+        modelMatrixLocation = glGetUniformLocation(program, "modelMatrix")
+        viewMatrixLocation = glGetUniformLocation(program, "viewMatrix")
+        lightColorLocation = glGetUniformLocation(program, "lightColor")
+        objectColorLocation = glGetUniformLocation(program, "objectColor")
+        lightPosLocation = glGetUniformLocation(program, "lightPos")
+        viewPosLocation = glGetUniformLocation(program, "viewPos")
 
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f
-    )
-
-    private var modelMatrix = FloatArray(16).apply {
-        Matrix.setIdentityM(this, 0)
     }
-    private var viewMatrix = FloatArray(16).apply {
-        Matrix.setIdentityM(this, 0)
-    }
-    private var projectionMatrix = FloatArray(16).apply {
-        Matrix.setIdentityM(this, 0)
-    }
 
-    private val projectionMatrixLocation = glGetUniformLocation(program, "projectionMatrix")
-    private val modelMatrixLocation = glGetUniformLocation(program, "modelMatrix")
-    private val viewMatrixLocation = glGetUniformLocation(program, "viewMatrix")
-    private val lightColorLocation = glGetUniformLocation(program, "lightColor")
-    private val objectColorLocation = glGetUniformLocation(program, "objectColor")
-    private val lightPosLocation = glGetUniformLocation(program, "lightPos")
-    private val viewPosLocation = glGetUniformLocation(program, "viewPos")
+    private var lightColorLocation = 0
+    private var objectColorLocation = 0
+    private var lightPosLocation = 0
+    private var viewPosLocation = 0
+
 //    private val uTextureUnit1 = glGetUniformLocation(program, "uTextureUnit1")
 //    private val uTextureUnit2 = glGetUniformLocation(program, "uTextureUnit2")
 
@@ -102,6 +103,8 @@ class Box : ObjectGL {
 
     init {
 
+        initProgram(R.raw.box_vertex_shader, R.raw.box_fragment_shader)
+        initUniformLocation()
         bindData()
         glUseProgram(program)
 //        val texture1 = TextureHelper.loadTexture(R.drawable.container)
@@ -110,6 +113,7 @@ class Box : ObjectGL {
         modelMatrix(modelMatrix, true)
         viewMatrix(viewMatrix, true)
         projectionMatrix(projectionMatrix, true)
+
 
         glUniform3f(objectColorLocation, 1.0f, 0.5f, 0.31f)
         glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f)
@@ -173,46 +177,43 @@ class Box : ObjectGL {
 
     override fun enable() {
         glUseProgram(program)
-//        bindData(matrix)
-//        glBindTexture(GL_TEXTURE_2D, texture)
-
         GLES30.glBindVertexArray(objVAO[0])
     }
 
-    override fun projectionMatrix(matrix: FloatArray, force: Boolean) {
-        if (matrix.contentEquals(projectionMatrix) && !force) {
-            return
-        }
-        projectionMatrix = matrix.clone()
-        glUseProgram(program)
-        glUniformMatrix4fv(projectionMatrixLocation, 1, false, matrix, 0)
-    }
+//    override fun projectionMatrix(matrix: FloatArray, force: Boolean) {
+//        if (matrix.contentEquals(projectionMatrix) && !force) {
+//            return
+//        }
+//        projectionMatrix = matrix.clone()
+//        glUseProgram(program)
+//        glUniformMatrix4fv(projectionMatrixLocation, 1, false, matrix, 0)
+//    }
 
-    override fun modelMatrix(matrix: FloatArray, force: Boolean) {
-        if (matrix.contentEquals(modelMatrix) && !force) {
-            return
-        }
-        modelMatrix = matrix.clone()
-        glUseProgram(program)
-        glUniformMatrix4fv(modelMatrixLocation, 1, false, matrix, 0)
-    }
+//    override fun modelMatrix(matrix: FloatArray, force: Boolean) {
+//        if (matrix.contentEquals(modelMatrix) && !force) {
+//            return
+//        }
+//        modelMatrix = matrix.clone()
+//        glUseProgram(program)
+//        glUniformMatrix4fv(modelMatrixLocation, 1, false, matrix, 0)
+//    }
 
-    override fun viewMatrix(matrix: FloatArray, force: Boolean) {
-        if (matrix.contentEquals(viewMatrix) && !force) {
-            return
-        }
-        viewMatrix = matrix.clone()
-        glUseProgram(program)
-        glUniformMatrix4fv(viewMatrixLocation, 1, false, matrix, 0)
-
-    }
+//    override fun viewMatrix(matrix: FloatArray, force: Boolean) {
+//        if (matrix.contentEquals(viewMatrix) && !force) {
+//            return
+//        }
+//        viewMatrix = matrix.clone()
+//        glUseProgram(program)
+//        glUniformMatrix4fv(viewMatrixLocation, 1, false, matrix, 0)
+//
+//    }
 
     fun lightPos(x: Float, y: Float, z: Float) {
         glUseProgram(program)
         glUniform3f(lightPosLocation, x, y, z)
     }
 
-    fun viewPos(x:Float, y:Float, z:Float) {
+    fun viewPos(x: Float, y: Float, z: Float) {
         glUseProgram(program)
         glUniform3f(viewPosLocation, x, y, z)
     }
