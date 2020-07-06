@@ -4,6 +4,7 @@ import android.opengl.EGLObjectHandle
 import android.opengl.GLES20.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import android.os.SystemClock
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.PI
@@ -53,7 +54,8 @@ class MyRenderer : GLSurfaceView.Renderer {
 
 
         observedCamera(light, 0.5f, 0f, 1f) {
-            autoCamera(it)
+//            rotateObject(it, progress() * 1.5f, 0f, 1f, 0f)
+//            autoCamera(it)
         }
 //
 //        observedCamera(box2, 0.5f, 1f, 1f)
@@ -93,6 +95,9 @@ class MyRenderer : GLSurfaceView.Renderer {
         )
     }
 
+    /**
+     * 旋转相机
+     */
     private fun rotateCamera(
         objectGL: ObjectGL,
         x: Float = eyeX,
@@ -114,8 +119,13 @@ class MyRenderer : GLSurfaceView.Renderer {
 
     }
 
-    private fun rotateObject(objectGL:ObjectGL) {
-        
+    /**
+     * 旋转物体
+     */
+    private fun rotateObject(objectGL: ObjectGL, angle: Float, x: Float, y: Float, z: Float) {
+//        Matrix.setIdentityM(modelMatrix, 0)
+        Matrix.rotateM(modelMatrix, 0, angle, x, y, z)
+        objectGL.modelMatrix(viewMatrix)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
