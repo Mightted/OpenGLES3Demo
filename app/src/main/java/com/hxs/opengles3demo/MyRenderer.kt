@@ -26,9 +26,10 @@ class MyRenderer : GLSurfaceView.Renderer {
     private val viewMatrix = FloatArray(16)
     private val modelMatrix = FloatArray(16)
     private val rotateMatrix = FloatArray(16)
+    private val tempMatrix = FloatArray(16)
     private var currentTime = System.currentTimeMillis()
     private var frames = 0
-    private val defaultRadius = 8f
+    private val defaultRadius = 10f
     private var eyeX: Float = 0f
     private var eyeY: Float = 0f
     private var eyeZ: Float = defaultRadius
@@ -50,11 +51,15 @@ class MyRenderer : GLSurfaceView.Renderer {
 
         observedCamera(box, 0.5f, 1f, 0f) {
             rotateCamera(it)
+            box.viewPos(eyeX, eyeX, eyeZ)
+            box.lightPos(light.objPos[0], light.objPos[1], light.objPos[2])
+
         }
 
 
         observedCamera(light, 0.5f, 0f, 1f) {
-//            rotateObject(it, progress() * 1.5f, 0f, 1f, 0f)
+            rotateMatrix(it, 2f, 0f, 1f, 0f)
+            rotateCamera(it)
 //            autoCamera(it)
         }
 //
@@ -77,10 +82,12 @@ class MyRenderer : GLSurfaceView.Renderer {
         objectGL.draw()
     }
 
-    private fun rotateMatrix(objectGL: ObjectGL, x: Float, y: Float, z: Float) {
-        Matrix.setIdentityM(rotateMatrix, 0)
-        Matrix.rotateM(rotateMatrix, 0, 0 * 1.5f, x, y, z)
-        objectGL.modelMatrix(rotateMatrix)
+    private fun rotateMatrix(objectGL: ObjectGL, angle: Float, x: Float, y: Float, z: Float) {
+        Matrix.setIdentityM(tempMatrix, 0)
+        Matrix.rotateM(tempMatrix, 0, angle, x, y, z)
+        Matrix.multiplyMM(rotateMatrix, 0, tempMatrix, 0, modelMatrix, 0)
+        System.arraycopy(rotateMatrix, 0, modelMatrix, 0, 16)
+        objectGL.modelMatrix(modelMatrix)
 
     }
 
@@ -125,7 +132,7 @@ class MyRenderer : GLSurfaceView.Renderer {
     private fun rotateObject(objectGL: ObjectGL, angle: Float, x: Float, y: Float, z: Float) {
 //        Matrix.setIdentityM(modelMatrix, 0)
         Matrix.rotateM(modelMatrix, 0, angle, x, y, z)
-        objectGL.modelMatrix(viewMatrix)
+        objectGL.modelMatrix(modelMatrix)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -135,7 +142,7 @@ class MyRenderer : GLSurfaceView.Renderer {
 
         Matrix.setLookAtM(
             viewMatrix, 0,
-            0f, 0f, 5f,
+            eyeX, eyeY, eyeZ,
             0f, 0f, 0f,
             0f, 1f, 0f
         )
@@ -195,8 +202,9 @@ class MyRenderer : GLSurfaceView.Renderer {
             })
         }
         box = Box().apply {
-            lightPos(1.4f, 1f, -2f)
-            viewPos(0f, 0f, 5f)
+            //            lightPos(1.4f, 1f, -2f)
+            lightPos(light.objPos[0], light.objPos[1], light.objPos[2])
+            viewPos(eyeX, eyeX, eyeZ)
         }
 //        box2 = Box()
 //        box3 = Box()
