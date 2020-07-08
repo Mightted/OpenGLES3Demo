@@ -29,17 +29,35 @@ class Box : ObjectGL() {
         modelMatrixLocation = glGetUniformLocation(program, "modelMatrix")
         viewMatrixLocation = glGetUniformLocation(program, "viewMatrix")
         lightColorLocation = glGetUniformLocation(program, "lightColor")
-        objectColorLocation = glGetUniformLocation(program, "objectColor")
-        lightPosLocation = glGetUniformLocation(program, "lightPos")
+//        objectColorLocation = glGetUniformLocation(program, "objectColor")
         viewPosLocation = glGetUniformLocation(program, "viewPos")
+
+        ambientLocation = glGetUniformLocation(program, "material.ambient")
+        diffuseLocation = glGetUniformLocation(program, "material.diffuse")
+        specularLocation = glGetUniformLocation(program, "material.specular")
+        shininessLocation = glGetUniformLocation(program, "material.shininess")
+
+        lightPosLocation = glGetUniformLocation(program, "light.position")
+        lightAmbientLocation = glGetUniformLocation(program, "light.ambient")
+        lightDiffuseLocation = glGetUniformLocation(program, "light.diffuse")
+        lightSpecularLocation = glGetUniformLocation(program, "light.specular")
 
 
     }
 
     private var lightColorLocation = 0
-    private var objectColorLocation = 0
-    private var lightPosLocation = 0
+    //    private var objectColorLocation = 0
     private var viewPosLocation = 0
+
+    private var ambientLocation = 0
+    private var diffuseLocation = 0
+    private var specularLocation = 0
+    private var shininessLocation = 0
+
+    private var lightAmbientLocation = 0
+    private var lightDiffuseLocation = 0
+    private var lightSpecularLocation = 0
+    private var lightPosLocation = 0
 
 
     init {
@@ -54,8 +72,18 @@ class Box : ObjectGL() {
         projectionMatrix(projectionMatrix, true)
 
 
-        glUniform3f(objectColorLocation, 1.0f, 0.5f, 0.31f)
+//        glUniform3f(objectColorLocation, 1.0f, 0.5f, 0.31f)
         glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f)
+        glUniform3f(ambientLocation, 1.0f, 0.5f, 0.31f)
+        glUniform3f(diffuseLocation, 1.0f, 0.5f, 0.31f)
+        glUniform3f(specularLocation, 0.5f, 0.5f, 0.5f)
+        glUniform1f(shininessLocation, 32.0f)
+
+        glUniform3f(lightAmbientLocation, 0.2f, 0.2f, 0.2f)
+        glUniform3f(lightDiffuseLocation, 0.5f, 0.5f, 0.5f)
+        glUniform3f(lightSpecularLocation, 1.0f, 1.0f, 1.0f)
+
+
     }
 
 

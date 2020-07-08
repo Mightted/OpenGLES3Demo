@@ -58,7 +58,7 @@ class MyRenderer : GLSurfaceView.Renderer {
 
 
         observedCamera(light, 0.5f, 0f, 1f) {
-            rotateMatrix(it, 2f, 0f, 1f, 0f)
+//            rotateMatrix(it, 0.5f, 0f, 1f, 0f)
             rotateCamera(it)
 //            autoCamera(it)
         }
@@ -198,7 +198,7 @@ class MyRenderer : GLSurfaceView.Renderer {
             modelMatrix(modelMatrix.apply {
                 Matrix.setIdentityM(modelMatrix, 0)
                 Matrix.scaleM(modelMatrix, 0, 0.5f, 0.5f, 0.5f)
-                Matrix.translateM(modelMatrix, 0, 1.4f, 1f, -2f)
+                Matrix.translateM(modelMatrix, 0, 1.4f, 1f, 2f)
             })
         }
         box = Box().apply {
