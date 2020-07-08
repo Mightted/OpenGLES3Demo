@@ -29,7 +29,7 @@ class Box : ObjectGL() {
         modelMatrixLocation = glGetUniformLocation(program, "modelMatrix")
         viewMatrixLocation = glGetUniformLocation(program, "viewMatrix")
         lightColorLocation = glGetUniformLocation(program, "lightColor")
-        objectColorLocation = glGetUniformLocation(program, "objectColor")
+//        objectColorLocation = glGetUniformLocation(program, "objectColor")
         lightPosLocation = glGetUniformLocation(program, "lightPos")
         viewPosLocation = glGetUniformLocation(program, "viewPos")
 
@@ -37,9 +37,10 @@ class Box : ObjectGL() {
     }
 
     private var lightColorLocation = 0
-    private var objectColorLocation = 0
+//    private var objectColorLocation = 0
     private var lightPosLocation = 0
     private var viewPosLocation = 0
+    private var ambient  = glGetUniformLocation(program, "material.ambient")
 
 
     init {
@@ -54,7 +55,7 @@ class Box : ObjectGL() {
         projectionMatrix(projectionMatrix, true)
 
 
-        glUniform3f(objectColorLocation, 1.0f, 0.5f, 0.31f)
+//        glUniform3f(objectColorLocation, 1.0f, 0.5f, 0.31f)
         glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f)
     }
 
