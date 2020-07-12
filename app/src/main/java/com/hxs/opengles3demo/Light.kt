@@ -29,9 +29,7 @@ class Light : ObjectGL() {
         bindData()
         glUseProgram(program)
 
-        modelMatrix(modelMatrix, true)
-        viewMatrix(viewMatrix, true)
-        projectionMatrix(projectionMatrix, true)
+        initMatrix()
 
     }
 

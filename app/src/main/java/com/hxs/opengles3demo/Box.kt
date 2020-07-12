@@ -65,14 +65,11 @@ class Box : ObjectGL() {
         initProgram(R.raw.box_vertex_shader, R.raw.box_fragment_shader)
         initUniformLocation()
         bindData()
-        glUseProgram(program)
-
-        modelMatrix(modelMatrix, true)
-        viewMatrix(viewMatrix, true)
-        projectionMatrix(projectionMatrix, true)
+        initMatrix()
 
 
 //        glUniform3f(objectColorLocation, 1.0f, 0.5f, 0.31f)
+        glUseProgram(program)
         glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f)
         glUniform3f(ambientLocation, 1.0f, 0.5f, 0.31f)
         glUniform3f(diffuseLocation, 1.0f, 0.5f, 0.31f)
