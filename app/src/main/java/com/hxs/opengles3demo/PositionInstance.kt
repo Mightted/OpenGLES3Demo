@@ -13,8 +13,8 @@ class PositionInstance {
     private var xzRadian: Float = 0f
     private var yRadian: Float = 0f
 
-    private var xzAngle: Float = 0f
-    private var yAngle: Float = 0f
+    var xzAngle: Float = 0f
+    var yAngle: Float = 0f
 
 
     /**
@@ -28,6 +28,8 @@ class PositionInstance {
 
         // 防止到达顶端或者底端，产生万向节死锁
         yAngle = yAngle.coerceIn(-0.5f * PI.toFloat() + 0.02f, 0.5f * PI.toFloat() - 0.02f)
+//        println("xzAngle:$xzAngle, yAngle:$yAngle")
+
 //        if (yAngle >= 0.5f * PI.toFloat() - 0.02f) {
 //            yAngle = 0.5f * PI.toFloat() - 0.02f
 //        } else if (yAngle <= -0.5f * PI.toFloat() + 0.02f) {

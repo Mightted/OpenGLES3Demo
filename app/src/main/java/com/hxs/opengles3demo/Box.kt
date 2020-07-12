@@ -7,6 +7,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
+import javax.microedition.khronos.opengles.GL
 
 
 const val FLOAT_BYTE_COUNT = 4
@@ -15,7 +16,7 @@ const val COUNT_NORMAL = 3
 const val COUNT_COLOR = 3
 const val COUNT_TEXTURE = 2
 
-const val STRIDE = (COUNT_LOCATION + COUNT_NORMAL) * FLOAT_BYTE_COUNT
+const val STRIDE = (COUNT_LOCATION + COUNT_NORMAL + COUNT_TEXTURE) * FLOAT_BYTE_COUNT
 
 class Box : ObjectGL() {
 
@@ -32,7 +33,7 @@ class Box : ObjectGL() {
 //        objectColorLocation = glGetUniformLocation(program, "objectColor")
         viewPosLocation = glGetUniformLocation(program, "viewPos")
 
-        ambientLocation = glGetUniformLocation(program, "material.ambient")
+//        ambientLocation = glGetUniformLocation(program, "material.ambient")
         diffuseLocation = glGetUniformLocation(program, "material.diffuse")
         specularLocation = glGetUniformLocation(program, "material.specular")
         shininessLocation = glGetUniformLocation(program, "material.shininess")
@@ -46,10 +47,11 @@ class Box : ObjectGL() {
     }
 
     private var lightColorLocation = 0
+
     //    private var objectColorLocation = 0
     private var viewPosLocation = 0
 
-    private var ambientLocation = 0
+    //    private var ambientLocation = 0
     private var diffuseLocation = 0
     private var specularLocation = 0
     private var shininessLocation = 0
@@ -66,19 +68,28 @@ class Box : ObjectGL() {
         initUniformLocation()
         bindData()
         initMatrix()
+         val boxTexture = TextureHelper.loadTexture(R.drawable.box)
+        val frameTexture = TextureHelper.loadTexture(R.drawable.box_frame)
 
 
 //        glUniform3f(objectColorLocation, 1.0f, 0.5f, 0.31f)
         glUseProgram(program)
         glUniform3f(lightColorLocation, 1.0f, 1.0f, 1.0f)
-        glUniform3f(ambientLocation, 1.0f, 0.5f, 0.31f)
-        glUniform3f(diffuseLocation, 1.0f, 0.5f, 0.31f)
+//        glUniform3f(ambientLocation, 1.0f, 0.5f, 0.31f)
+        glUniform1i(diffuseLocation, 1)
+        glUniform1i(specularLocation, 2)
+
         glUniform3f(specularLocation, 0.5f, 0.5f, 0.5f)
         glUniform1f(shininessLocation, 32.0f)
 
         glUniform3f(lightAmbientLocation, 0.2f, 0.2f, 0.2f)
         glUniform3f(lightDiffuseLocation, 0.5f, 0.5f, 0.5f)
         glUniform3f(lightSpecularLocation, 1.0f, 1.0f, 1.0f)
+
+        glActiveTexture(GL_TEXTURE1)
+        glBindTexture(GL_TEXTURE_2D, boxTexture)
+        glActiveTexture(GL_TEXTURE2)
+        glBindTexture(GL_TEXTURE_2D, frameTexture)
 
 
     }
@@ -101,8 +112,19 @@ class Box : ObjectGL() {
             STRIDE,
             (COUNT_LOCATION) * FLOAT_BYTE_COUNT
         )
+        glVertexAttribPointer(
+            2,
+            2,
+            GL_FLOAT,
+            false,
+            STRIDE,
+            (COUNT_LOCATION + COUNT_NORMAL) * FLOAT_BYTE_COUNT
+        )
+
+
         glEnableVertexAttribArray(0)
         glEnableVertexAttribArray(1)
+        glEnableVertexAttribArray(2)
 
         GLES30.glBindVertexArray(0)
 

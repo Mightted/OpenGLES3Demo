@@ -23,7 +23,7 @@ class MyRenderer : GLSurfaceView.Renderer {
     private val tempMatrix = FloatArray(32)
     private var currentTime = System.currentTimeMillis()
     private var frames = 0
-    private val defaultRadius = 10f
+    private val defaultRadius = 6f
 
 
     private val positionInstance = PositionInstance()
@@ -41,22 +41,28 @@ class MyRenderer : GLSurfaceView.Renderer {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
         observedCamera(box) {
-
-            positionInstance.getVectorByRadius(defaultRadius) { x, y, z ->
-                box.viewPos(x, y, z)
-                rotateCamera(it, x, y, z)
+            it.modelMatrix { matrix ->
+                Matrix.setIdentityM(matrix, 0)
+                Matrix.rotateM(matrix, 0, -positionInstance.yAngle  / PI.toFloat() * 180f, 1f, 0f,0f)
+                Matrix.rotateM(matrix, 0, positionInstance.xzAngle  / PI.toFloat() * 180f, 0f, 1f,0f)
             }
+
+//            positionInstance.getVectorByRadius(defaultRadius) { x, y, z ->
+//                box.viewPos(x, y, z)
+//                rotateCamera(it, x, y, z)
+//            }
             box.lightPos(light.objPos[0], light.objPos[1], light.objPos[2])
 
         }
 
 
         observedCamera(light) {
-            rotateMatrix(it, 0.5f, 0f, 1f, 0f)
+//            rotateMatrix(it, 0.5f, 0f, 1f, 0f)  // 公转
 //            rotateMatrix(it, 0.5f, 0f, 1f, 0f)
-            positionInstance.getVectorByRadius(defaultRadius) { x, y, z ->
-                rotateCamera(it, x, y, z)
-            }
+            // 摄像头转动
+//            positionInstance.getVectorByRadius(defaultRadius) { x, y, z ->
+//                rotateCamera(it, x, y, z)
+//            }
         }
 
     }
@@ -137,6 +143,7 @@ class MyRenderer : GLSurfaceView.Renderer {
                 0f, 0f, 0f,
                 0f, 1f, 0f
             )
+            box.viewPos(x, y, z)
         }
 
 
@@ -169,12 +176,12 @@ class MyRenderer : GLSurfaceView.Renderer {
         light = Light().apply {
             modelMatrix {
                 Matrix.setIdentityM(it, 0)
-                Matrix.scaleM(it, 0, 0.5f, 0.5f, 0.5f)
+                Matrix.scaleM(it, 0, 0.3f, 0.3f, 0.3f)
 //                Matrix.translateM(modelMatrix, 0, 3f, 0f, 0f) // 左边
 //                Matrix.translateM(modelMatrix, 0, -3f, 0f, 0f) // 右边
 //                Matrix.translateM(modelMatrix, 0, 0f, 3f, 0f) // 上面
 //                Matrix.translateM(modelMatrix, 0, 0f, -3f, 0f) // 下面
-                Matrix.translateM(it, 0, 0f, 0f, 3f) // 前面
+                Matrix.translateM(it, 0, 4f, 4f, 6f) // 前面
 //                Matrix.translateM(modelMatrix, 0, 0f, 0f, -3f) // 后面
             }
         }
