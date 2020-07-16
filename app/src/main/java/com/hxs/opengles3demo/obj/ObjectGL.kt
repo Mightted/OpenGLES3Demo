@@ -1,7 +1,8 @@
-package com.hxs.opengles3demo
+package com.hxs.opengles3demo.obj
 
 import android.opengl.GLES20
 import android.opengl.Matrix
+import com.hxs.opengles3demo.ShaderUtil
 
 /**
  * Time: 2020/6/28
@@ -16,11 +17,9 @@ abstract class ObjectGL {
 
     var program: Int = 0
 
-//    private val tempArray = FloatArray(4)
-
     fun initProgram(vertexId: Int, fragmentId: Int) {
-        program = ShaderUtil.getProgram(vertexId, fragmentId)
-
+        program =
+            ShaderUtil.getProgram(vertexId, fragmentId)
     }
 
 
@@ -51,41 +50,23 @@ abstract class ObjectGL {
 
 
     fun projectionMatrix(handle: (matrix: FloatArray) -> Unit = {}) {
-//        if (matrix.contentEquals(projectionMatrix) && !force) {
-//            return
-//        }
-//        projectionMatrix = matrix.clone()
         handle(projectionMatrix)
         GLES20.glUseProgram(program)
         GLES20.glUniformMatrix4fv(projectionMatrixLocation, 1, false, projectionMatrix, 0)
     }
 
     fun modelMatrix(handle: (matrix: FloatArray) -> Unit = {}) {
-//        if (matrix.contentEquals(modelMatrix) && !force) {
-//            return
-//        }
-//        modelMatrix = matrix.clone()
         handle(modelMatrix)
         GLES20.glUseProgram(program)
         GLES20.glUniformMatrix4fv(modelMatrixLocation, 1, false, modelMatrix, 0)
     }
 
     fun viewMatrix(handle: (matrix: FloatArray) -> Unit = {}) {
-//        if (matrix.contentEquals(viewMatrix) && !force) {
-//            return
-//        }
-//        viewMatrix = matrix.clone()
         handle(viewMatrix)
         GLES20.glUseProgram(program)
         GLES20.glUniformMatrix4fv(viewMatrixLocation, 1, false, viewMatrix, 0)
-
     }
 
-//    fun projectionMatrix(matrix: FloatArray, force: Boolean = false)
-//
-//    fun modelMatrix(matrix: FloatArray, force: Boolean = false)
-//
-//    fun viewMatrix(matrix: FloatArray, force: Boolean = false)
 
     abstract fun draw()
 }

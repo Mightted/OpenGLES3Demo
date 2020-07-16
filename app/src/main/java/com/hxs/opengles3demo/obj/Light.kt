@@ -1,11 +1,9 @@
-package com.hxs.opengles3demo
+package com.hxs.opengles3demo.obj
 
 import android.opengl.GLES20.*
 import android.opengl.GLES30
-import android.opengl.Matrix
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.FloatBuffer
+import com.hxs.opengles3demo.R
+import com.hxs.opengles3demo.VBOHelper
 
 /**
  * Time: 2020/6/28
@@ -24,7 +22,10 @@ class Light : ObjectGL() {
 
     init {
 
-        initProgram(R.raw.light_vertex_shader, R.raw.light_fragment_shader)
+        initProgram(
+            R.raw.light_vertex_shader,
+            R.raw.light_fragment_shader
+        )
         initUniformLocation()
         bindData()
         glUseProgram(program)
@@ -44,7 +45,8 @@ class Light : ObjectGL() {
 
 
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, STRIDE, 0)
+        glVertexAttribPointer(0, 3, GL_FLOAT, false,
+            STRIDE, 0)
 
         glEnableVertexAttribArray(0)
 

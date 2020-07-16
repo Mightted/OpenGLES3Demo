@@ -1,15 +1,14 @@
 package com.hxs.opengles3demo
 
-import android.opengl.EGLObjectHandle
 import android.opengl.GLES20.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import android.os.SystemClock
+import com.hxs.opengles3demo.obj.Box
+import com.hxs.opengles3demo.obj.Light
+import com.hxs.opengles3demo.obj.ObjectGL
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 
 const val TIME_FRAME: Float = 1000f / 60f

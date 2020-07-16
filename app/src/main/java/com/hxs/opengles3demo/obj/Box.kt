@@ -1,14 +1,10 @@
-package com.hxs.opengles3demo
+package com.hxs.opengles3demo.obj
 
 import android.opengl.GLES20.*
 import android.opengl.GLES30
-import android.opengl.Matrix
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.FloatBuffer
-import java.nio.IntBuffer
-import javax.microedition.khronos.opengles.GL
-
+import com.hxs.opengles3demo.R
+import com.hxs.opengles3demo.TextureHelper
+import com.hxs.opengles3demo.VBOHelper
 
 const val FLOAT_BYTE_COUNT = 4
 const val COUNT_LOCATION = 3
@@ -48,10 +44,8 @@ class Box : ObjectGL() {
 
     private var lightColorLocation = 0
 
-    //    private var objectColorLocation = 0
     private var viewPosLocation = 0
 
-    //    private var ambientLocation = 0
     private var diffuseLocation = 0
     private var specularLocation = 0
     private var shininessLocation = 0
@@ -64,12 +58,17 @@ class Box : ObjectGL() {
 
     init {
 
-        initProgram(R.raw.box_vertex_shader, R.raw.box_fragment_shader)
+        initProgram(
+            R.raw.box_vertex_shader,
+            R.raw.box_fragment_shader
+        )
         initUniformLocation()
         bindData()
         initMatrix()
-         val boxTexture = TextureHelper.loadTexture(R.drawable.box)
-        val frameTexture = TextureHelper.loadTexture(R.drawable.box_frame)
+         val boxTexture =
+             TextureHelper.loadTexture(R.drawable.box)
+        val frameTexture =
+            TextureHelper.loadTexture(R.drawable.box_frame)
 
 
 //        glUniform3f(objectColorLocation, 1.0f, 0.5f, 0.31f)
@@ -103,7 +102,8 @@ class Box : ObjectGL() {
         VBOHelper.updateVBO()
 
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, STRIDE, 0)
+        glVertexAttribPointer(0, 3, GL_FLOAT, false,
+            STRIDE, 0)
         glVertexAttribPointer(
             1,
             3,

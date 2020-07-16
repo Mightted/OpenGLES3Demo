@@ -36,6 +36,8 @@ object ShaderUtil {
         if (linkStatus[0] == 0) {
             println("hxs:链接失败")
         }
+        glDeleteShader(vertexShader)
+        glDeleteShader(fragmentShader)
         return program
 
 
